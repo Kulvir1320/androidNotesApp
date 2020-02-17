@@ -107,7 +107,7 @@ public class MainActivity extends AppCompatActivity {
 
             alertDialog.show();
 
-                Toast.makeText(this, "Satellite map is selected", Toast.LENGTH_SHORT).show();
+
                 return true;
 
             default:
