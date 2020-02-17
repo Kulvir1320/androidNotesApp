@@ -29,7 +29,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        listView = findViewById(R.id.listview);
+        listView = findViewById(R.id.category_list_view);
 //
      listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
          @Override
