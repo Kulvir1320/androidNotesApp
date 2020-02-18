@@ -29,8 +29,8 @@ public class DescriptionActivity extends AppCompatActivity {
         setContentView(R.layout.activity_description);
         imageView = findViewById(R.id.image_view);
 
-imageButton = findViewById(R.id.image_button);
-imageButton.setOnClickListener(new View.OnClickListener() {
+        imageButton = findViewById(R.id.image_button);
+         imageButton.setOnClickListener(new View.OnClickListener() {
     @SuppressLint("NewApi")
     @Override
     public void onClick(View v) {
