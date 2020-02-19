@@ -19,6 +19,8 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     public static final String COLUMN_TITLE = "title";
     public static final String COLUMN_DESC = "description";
     public static final String COLUMN_DATE = "date";
+    public static final String COLUMN_LAT = "latitude";
+    public static final String COLUMN_LONG = "longitude";
 
     public DataBaseHelper(@Nullable Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -31,9 +33,11 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         String sql = "create table  " + TABLE_NAME + "(" +
                 COLUMN_ID + " integer not null constraint note_pk primary key autoincrement," +
                 COLUMN_CAT + " varchar(200) not null, " +
-                COLUMN_TITLE + " varchar(200) , " +
-                COLUMN_DESC + " varchar(200) , " +
-                COLUMN_DATE + " varchar(200));";
+                COLUMN_TITLE + " varchar(200) not null , " +
+                COLUMN_DESC + " varchar(200) not null , " +
+                COLUMN_DATE + " varchar(200) not null , " +
+                COLUMN_LAT + " double not null , " +
+                COLUMN_LONG + " double not null);";
 //                COLUMN_SALARY + " double not null);" ;
         db.execSQL(sql);
     }
@@ -45,7 +49,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         onCreate(db);
     }
 
-    boolean addNote( String category, String title, String desc, String date){
+    boolean addNote( String category, String title, String desc, String date ,double latitude, double longitude){
 
 
         SQLiteDatabase sqLiteDatabase = getWritableDatabase();
@@ -56,6 +60,8 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         cv.put(COLUMN_TITLE,title);
         cv.put(COLUMN_DESC,desc);
         cv.put(COLUMN_DATE,date);
+        cv.put(COLUMN_LAT,latitude);
+        cv.put(COLUMN_LONG,longitude);
 //        cv.put(COLUMN_SALARY,String.valueOf(salary));
 
         return sqLiteDatabase.insert(TABLE_NAME,null,cv) != -1;

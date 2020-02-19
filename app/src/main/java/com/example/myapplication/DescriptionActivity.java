@@ -3,6 +3,7 @@ package com.example.myapplication;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
@@ -10,13 +11,26 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.location.Location;
 import android.os.Bundle;
+import android.os.Looper;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
+
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationCallback;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -24,9 +38,30 @@ import java.util.Calendar;
 public class DescriptionActivity extends AppCompatActivity {
 //    Button imageButton;
 //    ImageView imageView;
+
+    private static final int REQUEST_CODE = 1;
+
+
     public static  final int CAMERA_REQUEST = 1888;
     public static final int MY_CAMERA_PERMISSION_CODE = 100;
     DataBaseHelper dataBaseHelper;
+
+    FusedLocationProviderClient fusedLocationProviderClient;
+    LocationRequest locationRequest;
+    LocationCallback locationCallback;
+
+    Location noteLocation;
+
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        if(!checkPermission())
+            requestPermission();
+        else
+            getLastLocation();
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,6 +73,13 @@ public class DescriptionActivity extends AppCompatActivity {
         Button buttonSave = findViewById(R.id.btn_save_note);
 
         dataBaseHelper = new DataBaseHelper(this);
+        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
+
+        buildLocationRequest();
+        buildLocationCallBack();
+
+
+
 
         buttonSave.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -56,7 +98,7 @@ public class DescriptionActivity extends AppCompatActivity {
                     return;
                 }
 
-                if(dataBaseHelper.addNote(cname,ntitle,ndesc,joiningDate)){
+                if(dataBaseHelper.addNote(cname,ntitle,ndesc,joiningDate,noteLocation.getLatitude(),noteLocation.getLongitude())){
                     Toast.makeText(DescriptionActivity.this, "saved", Toast.LENGTH_SHORT).show();
                 }else {
                     Toast.makeText(DescriptionActivity.this, "not saved", Toast.LENGTH_SHORT).show();
@@ -73,49 +115,70 @@ public class DescriptionActivity extends AppCompatActivity {
 
 
 
+    }
 
-        
-//        imageView = findViewById(R.id.image_view);
-//
-//        imageButton = findViewById(R.id.image_button);
-//         imageButton.setOnClickListener(new View.OnClickListener() {
-//    @SuppressLint("NewApi")
-//    @Override
-//    public void onClick(View v) {
-//        if(checkSelfPermission((Manifest.permission.CAMERA)) != PackageManager.PERMISSION_GRANTED) {
-//            requestPermissions(new String[]{Manifest.permission.CAMERA}, MY_CAMERA_PERMISSION_CODE);
-//        }
-//        else{
-//            Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-//            startActivityForResult(cameraIntent,CAMERA_REQUEST);
-//        }
-//    }
-//});
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if(REQUEST_CODE == requestCode){
+            if(grantResults.length >0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                getLastLocation();
+                fusedLocationProviderClient.requestLocationUpdates(locationRequest,locationCallback, Looper.myLooper());
+            }
+        }
+    }
 
+    private void buildLocationRequest(){
+        locationRequest = new LocationRequest();
+        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+        locationRequest.setInterval(5000);
+        locationRequest.setFastestInterval(3000);
+        locationRequest.setSmallestDisplacement(10);
 
     }
 
-//    @Override
-//    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-//        if(requestCode == MY_CAMERA_PERMISSION_CODE) {
-//            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-//                Toast.makeText(this, "camera permission granted", Toast.LENGTH_SHORT).show();
-//                Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-//                startActivityForResult(cameraIntent, CAMERA_REQUEST);
-//            } else {
-//                Toast.makeText(this, "camera permission denied", Toast.LENGTH_SHORT).show();
-//            }
-//        }
-//    }
-//
-//    @SuppressLint("MissingSuperCall")
-//    @Override
-//    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-//        if(requestCode == CAMERA_REQUEST && resultCode == Activity.RESULT_OK)
-//        {
-//            Bitmap photo = (Bitmap) data.getExtras().get("data");
-//            imageView.setImageBitmap(photo);
-//
-//        }
-//    }
+    private void buildLocationCallBack() {
+        locationCallback = new LocationCallback() {
+            @Override
+            public void onLocationResult(LocationResult locationResult) {
+                for (Location location: locationResult.getLocations()) {
+
+                   noteLocation = location;
+
+
+                }
+            }
+        };
+    }
+
+    private boolean checkPermission() {
+        int permissionState = ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION);
+        return permissionState == PackageManager.PERMISSION_GRANTED;
+    }
+
+    private void requestPermission() {
+
+        ActivityCompat.requestPermissions(this,new String[]{Manifest.permission.ACCESS_FINE_LOCATION},REQUEST_CODE);
+    }
+
+    private void startLocationPermissionRequest() {
+        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_CODE);
+    }
+
+    private void getLastLocation() {
+        fusedLocationProviderClient.getLastLocation().addOnCompleteListener(this, new OnCompleteListener<Location>() {
+            @Override
+            public void onComplete(@NonNull Task<Location> task) {
+                if (task.isSuccessful() && task.getResult() != null) {
+                    noteLocation = task.getResult();
+                    System.out.println(noteLocation.getLongitude());
+                    System.out.println(noteLocation.getLatitude());
+
+                }
+            }
+        });
+    }
+
+
+
+
 }

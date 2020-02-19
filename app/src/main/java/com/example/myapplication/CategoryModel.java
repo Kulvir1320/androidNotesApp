@@ -1,5 +1,7 @@
 package com.example.myapplication;
 
+import android.location.Location;
+
 import java.util.ArrayList;
 
 public class CategoryModel {
@@ -8,14 +10,17 @@ public class CategoryModel {
      int id;
 
      String title,description,date;
+     double noteLat,noteLong;
 
-    public CategoryModel(int id, String title, String description, String date) {
+    public CategoryModel(int id, String title, String description, String date, double noteLat, double noteLong) {
         this.id = id;
-//        this.categoryName = categoryName;
         this.title = title;
         this.description = description;
         this.date = date;
+        this.noteLat = noteLat;
+        this.noteLong = noteLong;
     }
+
 
     public int getId() {
         return id;
@@ -39,6 +44,14 @@ public class CategoryModel {
 
 
     public static ArrayList<CategoryModel> listNotes = new ArrayList<>();
+
+    public double getNoteLat() {
+        return noteLat;
+    }
+
+    public double getNoteLong() {
+        return noteLong;
+    }
 
 
 //    private static String categoryName;
