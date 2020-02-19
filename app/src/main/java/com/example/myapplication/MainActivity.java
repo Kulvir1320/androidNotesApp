@@ -4,8 +4,10 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -21,6 +23,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
@@ -39,8 +42,20 @@ public class MainActivity extends AppCompatActivity {
         addCategory = findViewById(R.id.btn_add_category);
 
         categoryName = new ArrayList<>();
+
+        final SharedPreferences sharedPreferences = this.getSharedPreferences("com.example.myapplication", Context.MODE_PRIVATE);
+
+        try {
+            categoryName = (ArrayList<String>) ObjectSerializer.deserialize(sharedPreferences.getString("cname",ObjectSerializer.serialize(new ArrayList<>())));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+
         adapter = new ArrayAdapter<>(this,android.R.layout.simple_list_item_1,categoryName);
         listView.setAdapter(adapter);
+
+
 
 
         addCategory.setOnClickListener(new View.OnClickListener() {
@@ -65,6 +80,13 @@ public class MainActivity extends AppCompatActivity {
                         String cat = editTextCategory.getText().toString();
 
                         categoryName.add(cat);
+
+                            try {
+                                sharedPreferences.edit().putString("cname",ObjectSerializer.serialize(categoryName)).apply();
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+
                         listView.setAdapter(adapter);
                     }
                 });
