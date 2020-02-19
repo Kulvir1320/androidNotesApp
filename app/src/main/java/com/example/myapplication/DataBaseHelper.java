@@ -2,6 +2,7 @@ package com.example.myapplication;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
@@ -30,9 +31,9 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         String sql = "create table  " + TABLE_NAME + "(" +
                 COLUMN_ID + " integer not null constraint note_pk primary key autoincrement," +
                 COLUMN_CAT + " varchar(200) not null, " +
-                COLUMN_TITLE + " varchar(200) not null, " +
-                COLUMN_DESC + " varchar(200) not null, " +
-                COLUMN_DATE + " varchar(200) not null);";
+                COLUMN_TITLE + " varchar(200) , " +
+                COLUMN_DESC + " varchar(200) , " +
+                COLUMN_DATE + " varchar(200));";
 //                COLUMN_SALARY + " double not null);" ;
         db.execSQL(sql);
     }
@@ -46,26 +47,26 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 
     boolean addNote( String category, String title, String desc, String date){
 
-        //in order to insert items into database , we need a writeable dsatabase
-        //this method returns a SQLiteDatabase instance
 
         SQLiteDatabase sqLiteDatabase = getWritableDatabase();
 
-        //we need to define a content values instance
-
         ContentValues cv = new ContentValues();
 
-        //first argument is column name and the second is value
         cv.put(COLUMN_CAT,category);
         cv.put(COLUMN_TITLE,title);
         cv.put(COLUMN_DESC,desc);
         cv.put(COLUMN_DATE,date);
 //        cv.put(COLUMN_SALARY,String.valueOf(salary));
 
-        // insert method return row number if insertion is successful and -1 if un successful
-
         return sqLiteDatabase.insert(TABLE_NAME,null,cv) != -1;
 
-//        return true;
     }
+
+    Cursor getAllNotes(){
+        SQLiteDatabase sqLiteDatabase = getReadableDatabase();
+
+        return sqLiteDatabase.rawQuery("select * from " + TABLE_NAME + " where " + COLUMN_CAT + " =?",new String[]{MainActivity.categoryName.get(MainActivity.catPosition)} );
+    }
+
+
 }

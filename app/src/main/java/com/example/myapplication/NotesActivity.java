@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -25,9 +26,8 @@ public class NotesActivity extends AppCompatActivity {
 //
 //    String[] desc = {"one"};
 
-    List<CategoryModel> categoryModels;
-
     FloatingActionButton floatingActionButton;
+    DataBaseHelper dataBaseHelper;
 
 
     @Override
@@ -36,9 +36,14 @@ public class NotesActivity extends AppCompatActivity {
         setContentView(R.layout.activity_notes);
 
         gridView = findViewById(R.id.gridView);
-        categoryModels = new ArrayList<>();
+
         floatingActionButton = findViewById(R.id.floatingActionButton);
-        final IconAdapter iconAdapter = new IconAdapter(this, categoryModels);
+
+        dataBaseHelper = new DataBaseHelper(this);
+
+        loadNotes();
+
+        final IconAdapter iconAdapter = new IconAdapter(this, CategoryModel.listNotes);
         gridView.setAdapter(iconAdapter);
 
 
@@ -61,6 +66,26 @@ public class NotesActivity extends AppCompatActivity {
         });
 
 
+    }
+
+    private void loadNotes(){
+        Cursor cursor = dataBaseHelper.getAllNotes();
+        CategoryModel.listNotes.clear();
+
+
+
+        if(cursor.moveToFirst()){
+            do{
+
+                CategoryModel.listNotes.add(new CategoryModel(cursor.getInt(0),cursor.getString(2),cursor.getString(3),cursor.getString(4)));
+                System.out.println(cursor.getInt(0));
+                System.out.println(cursor.getString(1));
+                System.out.println(cursor.getString(2));
+                System.out.println(cursor.getString(3));
+
+            }while (cursor.moveToNext());
+            cursor.close();
+        }
     }
 
 

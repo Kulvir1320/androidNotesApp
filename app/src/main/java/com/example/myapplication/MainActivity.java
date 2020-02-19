@@ -33,6 +33,7 @@ public class MainActivity extends AppCompatActivity {
     public static ArrayList<String> categoryName;
     public static int catPosition;
     Button addCategory;
+    DataBaseHelper dataBaseHelper;
 
 
     @Override
@@ -43,6 +44,7 @@ public class MainActivity extends AppCompatActivity {
         addCategory = findViewById(R.id.btn_add_category);
 
         categoryName = new ArrayList<>();
+        dataBaseHelper = new DataBaseHelper(this);
 
         final SharedPreferences sharedPreferences = this.getSharedPreferences("com.example.myapplication", Context.MODE_PRIVATE);
 
@@ -84,9 +86,18 @@ public class MainActivity extends AppCompatActivity {
 
                             try {
                                 sharedPreferences.edit().putString("cname",ObjectSerializer.serialize(categoryName)).apply();
+
                             } catch (IOException e) {
                                 e.printStackTrace();
                             }
+
+//                            if(dataBaseHelper.addNote(cat," hb"," hvbh"," hbvh")){
+//                                Toast.makeText(MainActivity.this, "added", Toast.LENGTH_SHORT).show();
+//                            }else {
+//                                Toast.makeText(MainActivity.this, "not added", Toast.LENGTH_SHORT).show();
+//                            }
+
+
 
                         listView.setAdapter(adapter);
                     }
