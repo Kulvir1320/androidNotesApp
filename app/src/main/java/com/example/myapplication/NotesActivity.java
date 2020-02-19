@@ -12,6 +12,8 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.GridView;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
 public class NotesActivity extends AppCompatActivity {
     GridView gridView;
     int[] imageIcons = {R.drawable.icon01_01};
@@ -20,12 +22,25 @@ public class NotesActivity extends AppCompatActivity {
 
     String[] desc = {"one"};
 
+    FloatingActionButton floatingActionButton;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_notes);
         gridView = findViewById(R.id.gridView);
+
+        floatingActionButton = findViewById(R.id.floatingActionButton);
+
+        floatingActionButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(NotesActivity.this,DescriptionActivity.class);
+                startActivity(intent);
+            }
+        });
+
         final IconAdapter iconAdapter = new IconAdapter(this, title, desc, imageIcons);
         gridView.setAdapter(iconAdapter);
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -40,23 +55,5 @@ public class NotesActivity extends AppCompatActivity {
 
     }
 
-    public boolean onCreateOptionsMenu(Menu menu) {
-
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.category_menu, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        switch (item.getItemId()){
-
-            case R.id.add:
-
-        return true;
-
-    }
-        return true;
-    }
 
 }
