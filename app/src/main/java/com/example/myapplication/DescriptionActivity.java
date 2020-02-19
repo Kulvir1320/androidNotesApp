@@ -31,6 +31,10 @@ public class DescriptionActivity extends AppCompatActivity {
 
         EditText editTextTitle = findViewById(R.id.title_edit_text);
         EditText editTextDesc= findViewById(R.id.description_edit_text);
+        Button buttonSave = findViewById(R.id.btn_save_note);
+
+
+
 
         
 //        imageView = findViewById(R.id.image_view);

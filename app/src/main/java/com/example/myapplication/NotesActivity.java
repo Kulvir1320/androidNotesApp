@@ -14,13 +14,18 @@ import android.widget.GridView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class NotesActivity extends AppCompatActivity {
     GridView gridView;
-    int[] imageIcons = {R.drawable.icon01_01};
+//    int[] imageIcons = {R.drawable.icon01_01};
+//
+//    String[] title = {"one"};
+//
+//    String[] desc = {"one"};
 
-    String[] title = {"one"};
-
-    String[] desc = {"one"};
+    List<CategoryModel> categoryModels;
 
     FloatingActionButton floatingActionButton;
 
@@ -29,9 +34,13 @@ public class NotesActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_notes);
-        gridView = findViewById(R.id.gridView);
 
+        gridView = findViewById(R.id.gridView);
+        categoryModels = new ArrayList<>();
         floatingActionButton = findViewById(R.id.floatingActionButton);
+        final IconAdapter iconAdapter = new IconAdapter(this, categoryModels);
+        gridView.setAdapter(iconAdapter);
+
 
         floatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -41,8 +50,7 @@ public class NotesActivity extends AppCompatActivity {
             }
         });
 
-        final IconAdapter iconAdapter = new IconAdapter(this, title, desc, imageIcons);
-        gridView.setAdapter(iconAdapter);
+
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {

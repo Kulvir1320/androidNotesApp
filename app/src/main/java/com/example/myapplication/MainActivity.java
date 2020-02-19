@@ -30,7 +30,8 @@ public class MainActivity extends AppCompatActivity {
 
     ListView listView;
     ArrayAdapter<String> adapter;
-    ArrayList<String> categoryName;
+    public static ArrayList<String> categoryName;
+    public static int catPosition;
     Button addCategory;
 
 
@@ -108,6 +109,8 @@ public class MainActivity extends AppCompatActivity {
      listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
          @Override
          public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+             catPosition = position;
              Intent intent = new Intent(MainActivity.this, NotesActivity.class);
              intent.putExtra("id", position);
              startActivity(intent);

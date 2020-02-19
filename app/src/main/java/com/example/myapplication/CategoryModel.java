@@ -6,11 +6,12 @@ public class CategoryModel {
 
 
      int id;
-     String categoryName,title,description,date;
 
-    public CategoryModel(int id, String categoryName, String title, String description, String date) {
+     String title,description,date;
+
+    public CategoryModel(int id, String title, String description, String date) {
         this.id = id;
-        this.categoryName = categoryName;
+//        this.categoryName = categoryName;
         this.title = title;
         this.description = description;
         this.date = date;
@@ -20,9 +21,9 @@ public class CategoryModel {
         return id;
     }
 
-    public String getCategoryName() {
-        return categoryName;
-    }
+//    public String getCategoryName() {
+//        return categoryName;
+//    }
 
     public String getTitle() {
         return title;
