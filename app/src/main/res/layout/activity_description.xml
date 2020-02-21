@@ -40,6 +40,7 @@
         android:layout_height="300dp"
         android:layout_marginLeft="20dp"
         android:layout_marginTop="5dp"
+        android:scaleType="fitXY"
         android:id="@+id/image_view"
         />
 

@@ -2,6 +2,9 @@ package com.example.myapplication;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.net.Uri;
+import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,6 +14,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.io.IOException;
 import java.util.List;
 
 public class IconAdapter extends BaseAdapter {
@@ -19,6 +23,8 @@ public class IconAdapter extends BaseAdapter {
 //    String[] notesDesc;
 //    int[] images;
    public int position;
+    String photopath;
+    Bitmap photobitmap;
 
     List<CategoryModel> categoryModelList;
 
@@ -51,22 +57,26 @@ public class IconAdapter extends BaseAdapter {
 
 
         TextView title = convertView.findViewById(R.id.tv_title);
-        TextView desc = convertView.findViewById(R.id.tv_desc);
+//        TextView desc = convertView.findViewById(R.id.tv_desc);
         TextView date = convertView.findViewById(R.id.tv_date);
+        ImageView image = convertView.findViewById(R.id.image_note);
 
 
         title.setText(categoryModelList.get(position).getTitle());
-        desc.setText(categoryModelList.get(position).getDescription());
+//        desc.setText(categoryModelList.get(position).getDescription());
         date.setText(categoryModelList.get(position).getDate());
 
+        photopath = categoryModelList.get(position).getImage();
 
+        if(photopath != null){
+            try {
+                photobitmap = MediaStore.Images.Media.getBitmap(context.getContentResolver(),Uri.parse(photopath));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            image.setImageBitmap(photobitmap);
+        }
 
-
-//        ImageView imageView = convertView.findViewById(R.id.image_view);
-
-//        title.setText(notesTittle[position]);
-//        desc.setText(notesDesc[position]);
-//        imageView.setImageResource(images[position]);
 
         return convertView;
     }

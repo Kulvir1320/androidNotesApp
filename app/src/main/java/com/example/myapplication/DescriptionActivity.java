@@ -60,7 +60,7 @@ public class DescriptionActivity extends AppCompatActivity {
     ImageButton startRec;
     ImageButton stopRec;
     ImageButton playRec;
-    String mCurrentPhotoPath = "image";
+    String mCurrentPhotoPath ;
     Bitmap mImageBitmap;
 
     private static final int REQUEST_CODE = 1;
@@ -85,6 +85,9 @@ public class DescriptionActivity extends AppCompatActivity {
     AudioManager audioManager;
     boolean selected;
 
+    EditText editTextTitle;
+    EditText editTextDesc;
+
     CategoryModel selectednote;
 
     final int REQUEST_PERMISSION_CODE = 1000;
@@ -107,7 +110,7 @@ public class DescriptionActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_description);
 
-        final EditText editTextTitle = findViewById(R.id.title_edit_text);
+         final EditText editTextTitle = findViewById(R.id.title_edit_text);
         final EditText editTextDesc= findViewById(R.id.description_edit_text);
         //image capture
 
@@ -145,13 +148,17 @@ public class DescriptionActivity extends AppCompatActivity {
             nid = selectednote.getId();
             startRec.setVisibility(View.GONE);
             playRec.setVisibility(View.VISIBLE);
-            try {
-                mImageBitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(),Uri.parse(mCurrentPhotoPath));
-                imageView.setImageBitmap(mImageBitmap);
 
-            } catch (IOException e) {
-                e.printStackTrace();
+            if(mCurrentPhotoPath != null){
+                try {
+                    mImageBitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(),Uri.parse(mCurrentPhotoPath));
+                    imageView.setImageBitmap(mImageBitmap);
+
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
+
 
 
         }
@@ -162,6 +169,8 @@ public class DescriptionActivity extends AppCompatActivity {
         imageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+                titleName = editTextTitle.getText().toString();
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
 
                     if(checkSelfPermission(Manifest.permission.CAMERA) == PackageManager.PERMISSION_DENIED || checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
@@ -356,7 +365,7 @@ public class DescriptionActivity extends AppCompatActivity {
     private File createImageFile() throws IOException {
 
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        String imageFileName = "JPEG_" + timeStamp + "_";
+        String imageFileName = titleName + timeStamp + "_";
 
         File storageDir = Environment.getExternalStorageDirectory();
         File dir = new File(storageDir.getAbsolutePath() + "/notes/");
