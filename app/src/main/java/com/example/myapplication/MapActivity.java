@@ -17,6 +17,9 @@ import android.location.Location;
 import android.os.Bundle;
 import android.os.Looper;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
@@ -102,10 +105,10 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         Intent intent = getIntent();
         i = intent.getExtras().getInt("id");
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        Double notes_lat = CategoryModel.listNotes.get(i-1).getNoteLat();
-        Double notes_long = CategoryModel.listNotes.get(i-1).getNoteLong();
+        dest_lat = CategoryModel.listNotes.get(i-1).getNoteLat();
+        dest_lng = CategoryModel.listNotes.get(i-1).getNoteLong();
 
-        LatLng noteLatLng = new LatLng(notes_lat,notes_long);
+        LatLng noteLatLng = new LatLng(dest_lat,dest_lng);
         MarkerOptions options = new MarkerOptions().position(noteLatLng).title("your saved loaction")
                 .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA));;
         mMap.addMarker(options);
@@ -202,6 +205,48 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         ActivityCompat.requestPermissions(this,
                 new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_CODE);
     }
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater menuInflater = getMenuInflater();
+        menuInflater.inflate(R.menu.map_activity,menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        Object[] dataTransfer;
+        switch (item.getItemId()){
+
+            case R.id.btn_duration:
+////                loadsortedNotes(DataBaseHelper.COLUMN_DATE);
+//                IconAdapter iconAdapter1 = new IconAdapter(NotesActivity.this,CategoryModel.listNotes);
+//                gridView.setAdapter(iconAdapter1);
+
+
+            case R.id.btn_direction:
+                dataTransfer = new Object[3];
+             String   url = getDirectionUrl();
+                dataTransfer[0] = mMap;
+                dataTransfer[1] = url;
+                dataTransfer[2] = new LatLng(dest_lat, dest_lng);
+
+                GetDirectionsData getDirectionsData = new GetDirectionsData();
+                // execute asynchronously
+                getDirectionsData.execute(dataTransfer);
+                if (item.getItemId() == R.id.btn_duration)
+                    directionRequested = false;
+                else
+                    directionRequested = true;
+                break;
+//                loadsortedNotes(DataBaseHelper.COLUMN_TITLE);
+//                IconAdapter iconAdapter = new IconAdapter(NotesActivity.this,CategoryModel.listNotes);
+//                gridView.setAdapter(iconAdapter);
+
+
+        }
+        return true;
+    }
+
 
 
 }
