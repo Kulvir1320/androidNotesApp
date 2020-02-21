@@ -13,8 +13,9 @@ public class CategoryModel implements Serializable {
      String title,description,date;
      double noteLat,noteLong;
      String audio;
+     String image;
 
-    public CategoryModel(int id, String title, String description, String date, double noteLat, double noteLong, String audio) {
+    public CategoryModel(int id, String title, String description, String date, double noteLat, double noteLong, String audio, String image) {
         this.id = id;
         this.title = title;
         this.description = description;
@@ -22,7 +23,9 @@ public class CategoryModel implements Serializable {
         this.noteLat = noteLat;
         this.noteLong = noteLong;
         this.audio = audio;
+        this.image = image;
     }
+
 
 //    public CategoryModel(int id, String title, String description, String date, double noteLat, double noteLong) {
 //        this.id = id;
@@ -67,6 +70,10 @@ public class CategoryModel implements Serializable {
 
     public String getAudio() {
         return audio;
+    }
+
+    public String getImage() {
+        return image;
     }
 
 

@@ -60,7 +60,7 @@ public class DescriptionActivity extends AppCompatActivity {
     ImageButton startRec;
     ImageButton stopRec;
     ImageButton playRec;
-    String mCurrentPhotoPath;
+    String mCurrentPhotoPath = "image";
     Bitmap mImageBitmap;
 
     private static final int REQUEST_CODE = 1;
@@ -141,9 +141,19 @@ public class DescriptionActivity extends AppCompatActivity {
             editTextTitle.setText(selectednote.getTitle());
             editTextDesc.setText(selectednote.getDescription());
             audiofilepath = selectednote.getAudio();
+            mCurrentPhotoPath = selectednote.getImage();
             nid = selectednote.getId();
             startRec.setVisibility(View.GONE);
             playRec.setVisibility(View.VISIBLE);
+            try {
+                mImageBitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(),Uri.parse(mCurrentPhotoPath));
+                imageView.setImageBitmap(mImageBitmap);
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+
         }
 
 
@@ -202,7 +212,7 @@ public class DescriptionActivity extends AppCompatActivity {
                 }
 
                 if(!selected){
-                    if(dataBaseHelper.addNote(cname,ntitle,ndesc,joiningDate,noteLocation.getLatitude(),noteLocation.getLongitude(),audiofilepath)){
+                    if(dataBaseHelper.addNote(cname,ntitle,ndesc,joiningDate,noteLocation.getLatitude(),noteLocation.getLongitude(),audiofilepath,mCurrentPhotoPath)){
                         Toast.makeText(DescriptionActivity.this, "saved", Toast.LENGTH_SHORT).show();
                     }else {
                         Toast.makeText(DescriptionActivity.this, "not saved", Toast.LENGTH_SHORT).show();
