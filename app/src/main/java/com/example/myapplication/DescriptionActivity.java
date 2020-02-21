@@ -4,15 +4,20 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.location.Location;
+import android.media.AudioManager;
+import android.media.MediaPlayer;
+import android.media.MediaRecorder;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -22,6 +27,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -40,7 +46,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 public class DescriptionActivity extends AppCompatActivity {
-    Button imageButton;
+    ImageButton imageButton;
     ImageView imageView;
     Uri imageUri;
 
@@ -57,6 +63,15 @@ public class DescriptionActivity extends AppCompatActivity {
     LocationCallback locationCallback;
 
     Location noteLocation;
+
+    String audiofilepath = "";
+    MediaRecorder mediaRecorder;
+    MediaPlayer mediaPlayer;
+    AudioManager audioManager;
+
+    final int REQUEST_PERMISSION_CODE = 1000;
+
+    final private static String RECORDED_FILE = "/audio.3gp";
 
 
     @Override
@@ -90,6 +105,11 @@ public class DescriptionActivity extends AppCompatActivity {
 
         buildLocationRequest();
         buildLocationCallBack();
+
+        audioManager = (AudioManager) this.getSystemService(Context.AUDIO_SERVICE);
+        // set the volume of played media to maximum.
+        audioManager.setStreamVolume (AudioManager.STREAM_MUSIC, audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC),0);
+
 
         imageButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -178,18 +198,7 @@ public class DescriptionActivity extends AppCompatActivity {
                 Toast.makeText(this, "denied", Toast.LENGTH_SHORT).show();
             }
 
-            if(CAMERA_REQUEST == requestCode){
 
-                if(grantResults.length >0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
-                openCamera();
-
-                    fusedLocationProviderClient.requestLocationUpdates(locationRequest,locationCallback, Looper.myLooper());
-                }
-                else{
-                    Toast.makeText(this, " camersa denied", Toast.LENGTH_SHORT).show();
-                }
-
-            }
 
 //            if(grantResults.length >0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
 //                openCamera();
@@ -197,6 +206,25 @@ public class DescriptionActivity extends AppCompatActivity {
 //            else{
 //                Toast.makeText(this, "denied camera", Toast.LENGTH_SHORT).show();
 //            }
+        }
+        if (requestCode == REQUEST_PERMISSION_CODE) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)
+                Toast.makeText(this, "Permission Granted", Toast.LENGTH_SHORT).show();
+            else
+                Toast.makeText(this, "Permission Denied", Toast.LENGTH_SHORT).show();
+        }
+
+        if(CAMERA_REQUEST == requestCode){
+
+            if(grantResults.length >0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                openCamera();
+
+                fusedLocationProviderClient.requestLocationUpdates(locationRequest,locationCallback, Looper.myLooper());
+            }
+            else{
+                Toast.makeText(this, " camersa denied", Toast.LENGTH_SHORT).show();
+            }
+
         }
     }
 
@@ -241,8 +269,11 @@ public class DescriptionActivity extends AppCompatActivity {
         ActivityCompat.requestPermissions(this,new String[]{Manifest.permission.ACCESS_FINE_LOCATION},REQUEST_CODE);
     }
 
-    private void startLocationPermissionRequest() {
-        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_CODE);
+    private void requestAudioPermission() {
+        ActivityCompat.requestPermissions(this, new String[]{
+                Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                Manifest.permission.RECORD_AUDIO
+        }, REQUEST_PERMISSION_CODE);
     }
 
     private void getLastLocation() {
@@ -257,6 +288,26 @@ public class DescriptionActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    private boolean checkPermissionDevice() {
+        int write_external_storage_result = ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        int record_audio_result = ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO);
+        return write_external_storage_result == PackageManager.PERMISSION_GRANTED &&
+                record_audio_result == PackageManager.PERMISSION_GRANTED;
+    }
+
+    private void setUpMediaRecorder() {
+        mediaRecorder = new MediaRecorder();
+        mediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
+        mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
+        mediaRecorder.setAudioEncoder(MediaRecorder.OutputFormat.AMR_NB);
+        mediaRecorder.setOutputFile(audiofilepath);
+
+//        mediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
+//        mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
+//        mediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.DEFAULT);
+
     }
 
 
