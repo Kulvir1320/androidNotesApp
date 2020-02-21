@@ -11,15 +11,26 @@ public class CategoryModel {
 
      String title,description,date;
      double noteLat,noteLong;
+     String audio;
 
-    public CategoryModel(int id, String title, String description, String date, double noteLat, double noteLong) {
+    public CategoryModel(int id, String title, String description, String date, double noteLat, double noteLong, String audio) {
         this.id = id;
         this.title = title;
         this.description = description;
         this.date = date;
         this.noteLat = noteLat;
         this.noteLong = noteLong;
+        this.audio = audio;
     }
+
+//    public CategoryModel(int id, String title, String description, String date, double noteLat, double noteLong) {
+//        this.id = id;
+//        this.title = title;
+//        this.description = description;
+//        this.date = date;
+//        this.noteLat = noteLat;
+//        this.noteLong = noteLong;
+//    }
 
 
     public int getId() {
@@ -51,6 +62,10 @@ public class CategoryModel {
 
     public double getNoteLong() {
         return noteLong;
+    }
+
+    public String getAudio() {
+        return audio;
     }
 
 

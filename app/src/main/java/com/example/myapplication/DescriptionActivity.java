@@ -41,6 +41,7 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 
+import java.io.IOException;
 import java.net.URI;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -49,6 +50,9 @@ public class DescriptionActivity extends AppCompatActivity {
     ImageButton imageButton;
     ImageView imageView;
     Uri imageUri;
+    ImageButton startRec;
+    ImageButton stopRec;
+    ImageButton playRec;
 
     private static final int REQUEST_CODE = 1;
 
@@ -63,15 +67,17 @@ public class DescriptionActivity extends AppCompatActivity {
     LocationCallback locationCallback;
 
     Location noteLocation;
+    String titleName;
 
     String audiofilepath = "";
     MediaRecorder mediaRecorder;
     MediaPlayer mediaPlayer;
     AudioManager audioManager;
+    boolean selected;
 
     final int REQUEST_PERMISSION_CODE = 1000;
 
-    final private static String RECORDED_FILE = "/audio.3gp";
+    String RECORDED_FILE = "/audio.3gp";
 
 
     @Override
@@ -95,6 +101,10 @@ public class DescriptionActivity extends AppCompatActivity {
 
         imageButton = findViewById(R.id.chooseimagebtn);
         imageView = findViewById(R.id.image_view);
+        startRec = findViewById(R.id.btn_start_record);
+        stopRec = findViewById(R.id.btn_stop_record);
+        playRec = findViewById(R.id.btn_play_record);
+
 
 
         Button buttonSave = findViewById(R.id.btn_save_note);
@@ -109,6 +119,17 @@ public class DescriptionActivity extends AppCompatActivity {
         audioManager = (AudioManager) this.getSystemService(Context.AUDIO_SERVICE);
         // set the volume of played media to maximum.
         audioManager.setStreamVolume (AudioManager.STREAM_MUSIC, audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC),0);
+
+        Intent intent = getIntent();
+        selected = intent.getBooleanExtra("selected",false);
+
+        if(selected){
+            audiofilepath = intent.getStringExtra("audio");
+            startRec.setVisibility(View.GONE);
+            playRec.setVisibility(View.VISIBLE);
+        }
+
+
 
 
         imageButton.setOnClickListener(new View.OnClickListener() {
@@ -147,12 +168,14 @@ public class DescriptionActivity extends AppCompatActivity {
                 String ntitle = editTextTitle.getText().toString().trim();
                 String ndesc = editTextDesc.getText().toString().trim();
 
+                titleName = ntitle;
+
                 if(ntitle.isEmpty() && ndesc.isEmpty()){
                     Toast.makeText(DescriptionActivity.this, "Fill the required feilds", Toast.LENGTH_SHORT).show();
                     return;
                 }
 
-                if(dataBaseHelper.addNote(cname,ntitle,ndesc,joiningDate,noteLocation.getLatitude(),noteLocation.getLongitude())){
+                if(dataBaseHelper.addNote(cname,ntitle,ndesc,joiningDate,noteLocation.getLatitude(),noteLocation.getLongitude(),audiofilepath)){
                     Toast.makeText(DescriptionActivity.this, "saved", Toast.LENGTH_SHORT).show();
                 }else {
                     Toast.makeText(DescriptionActivity.this, "not saved", Toast.LENGTH_SHORT).show();
@@ -164,6 +187,70 @@ public class DescriptionActivity extends AppCompatActivity {
 
 
 
+            }
+        });
+
+        startRec.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(!checkPermissionDevice()){
+                    requestAudioPermission();
+                    return;
+                }
+
+                if(checkPermissionDevice()){
+
+                   RECORDED_FILE = "/audio" + titleName + ".3gp";
+                    audiofilepath = getExternalCacheDir().getAbsolutePath()
+                            + RECORDED_FILE;
+                    setUpMediaRecorder();
+
+                    try {
+                        mediaRecorder.prepare();
+                        mediaRecorder.start();
+                    } catch (IllegalStateException ise) {
+                        // make something ...
+                        ise.printStackTrace();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+
+                    startRec.setVisibility(View.GONE);
+                    stopRec.setVisibility(View.VISIBLE);
+
+                }else {
+                    requestAudioPermission();
+                }
+            }
+        });
+
+        stopRec.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mediaRecorder.stop();
+                stopRec.setVisibility(View.GONE);
+                playRec.setVisibility(View.VISIBLE);
+            }
+        });
+
+        playRec.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mediaPlayer = new MediaPlayer();
+                try {
+                    mediaPlayer.setDataSource(audiofilepath);
+                    mediaPlayer.prepare();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+                mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                    @Override
+                    public void onCompletion(MediaPlayer mp) {
+                    }
+                });
+
+                mediaPlayer.start();
             }
         });
 

@@ -21,6 +21,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     public static final String COLUMN_DATE = "date";
     public static final String COLUMN_LAT = "latitude";
     public static final String COLUMN_LONG = "longitude";
+    public static final String COLUMN_AUDIO = "audio";
 
     public DataBaseHelper(@Nullable Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -37,7 +38,8 @@ public class DataBaseHelper extends SQLiteOpenHelper {
                 COLUMN_DESC + " varchar(200) not null , " +
                 COLUMN_DATE + " varchar(200) not null , " +
                 COLUMN_LAT + " double not null , " +
-                COLUMN_LONG + " double not null);";
+                COLUMN_LONG + " double not null , " +
+                COLUMN_AUDIO + " varchar(200) not null);" ;
 //                COLUMN_SALARY + " double not null);" ;
         db.execSQL(sql);
     }
@@ -49,7 +51,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         onCreate(db);
     }
 
-    boolean addNote( String category, String title, String desc, String date ,double latitude, double longitude){
+    boolean addNote( String category, String title, String desc, String date ,double latitude, double longitude,String audio){
 
 
         SQLiteDatabase sqLiteDatabase = getWritableDatabase();
@@ -62,6 +64,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         cv.put(COLUMN_DATE,date);
         cv.put(COLUMN_LAT,latitude);
         cv.put(COLUMN_LONG,longitude);
+        cv.put(COLUMN_AUDIO,audio);
 //        cv.put(COLUMN_SALARY,String.valueOf(salary));
 
         return sqLiteDatabase.insert(TABLE_NAME,null,cv) != -1;

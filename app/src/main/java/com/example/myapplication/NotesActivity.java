@@ -28,6 +28,7 @@ public class NotesActivity extends AppCompatActivity {
 
     FloatingActionButton floatingActionButton;
     DataBaseHelper dataBaseHelper;
+    String audioPath;
 
 
     @Override
@@ -55,12 +56,37 @@ public class NotesActivity extends AppCompatActivity {
             }
         });
 
+//        gridView.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+//            @Override
+//            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+//
+//                System.out.println("grid view click");
+//
+//                audioPath = CategoryModel.listNotes.get(position).getAudio();
+//                Intent intent = new Intent(NotesActivity.this, DescriptionActivity.class);
+//                intent.putExtra("audio",audioPath);
+//                intent.putExtra("selected",true);
+//                startActivity(intent);
+//
+//            }
+//
+//            @Override
+//            public void onNothingSelected(AdapterView<?> parent) {
+//
+//            }
+//        });
+
 
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+                System.out.println("grid view click");
+
+                audioPath = CategoryModel.listNotes.get(position).getAudio();
                 Intent intent = new Intent(NotesActivity.this, DescriptionActivity.class);
-                intent.putExtra("id", position);
+                intent.putExtra("audio",audioPath);
+                intent.putExtra("selected",true);
                 startActivity(intent);
             }
         });
@@ -77,7 +103,7 @@ public class NotesActivity extends AppCompatActivity {
         if(cursor.moveToFirst()){
             do{
 
-                CategoryModel.listNotes.add(new CategoryModel(cursor.getInt(0),cursor.getString(2),cursor.getString(3),cursor.getString(4),cursor.getDouble(5),cursor.getDouble(6)));
+                CategoryModel.listNotes.add(new CategoryModel(cursor.getInt(0),cursor.getString(2),cursor.getString(3),cursor.getString(4),cursor.getDouble(5),cursor.getDouble(6),cursor.getString(7)));
                 System.out.println(cursor.getInt(0));
                 System.out.println(cursor.getString(1));
                 System.out.println(cursor.getString(2));
