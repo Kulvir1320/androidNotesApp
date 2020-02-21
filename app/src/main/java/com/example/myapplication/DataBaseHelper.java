@@ -77,6 +77,12 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         return sqLiteDatabase.rawQuery("select * from " + TABLE_NAME + " where " + COLUMN_CAT + " =?",new String[]{MainActivity.categoryName.get(MainActivity.catPosition)} );
     }
 
+    Cursor searchNotes(){
+        SQLiteDatabase sqLiteDatabase = getReadableDatabase();
+
+        return sqLiteDatabase.rawQuery("select * from " + TABLE_NAME + " where " + COLUMN_CAT + " =?",new String[]{MainActivity.categoryName.get(MainActivity.catPosition)} );
+    }
+
 
     boolean updateNote(int id, String title, String desc,String audio){
         SQLiteDatabase sqLiteDatabase = getWritableDatabase();

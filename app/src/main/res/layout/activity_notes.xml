@@ -16,10 +16,18 @@
 
     <GridView
         android:id="@+id/gridView"
+        style="@android:style/Widget.Holo.Light.GridView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:numColumns="2">
+        android:clipChildren="true"
+
+        android:fadingEdge="horizontal"
+        android:gravity="center"
+        android:numColumns="2"
+        android:padding="5dp"
+        android:requiresFadingEdge="horizontal|vertical"
+        android:textFilterEnabled="false">
 
     </GridView>
 

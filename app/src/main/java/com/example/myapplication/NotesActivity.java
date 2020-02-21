@@ -33,8 +33,9 @@ public class NotesActivity extends AppCompatActivity {
     FloatingActionButton floatingActionButton;
     DataBaseHelper dataBaseHelper;
     String audioPath;
+    int ccid;
     SearchView searchView;
-    List<CategoryModel> FilterList;
+    List<CategoryModel> filterList;
 
 
     @Override
@@ -47,6 +48,9 @@ public class NotesActivity extends AppCompatActivity {
         floatingActionButton = findViewById(R.id.floatingActionButton);
 
         dataBaseHelper = new DataBaseHelper(this);
+        searchView = findViewById(R.id.searchView);
+
+        filterList = new ArrayList<>();
 
         loadNotes();
 
@@ -61,22 +65,45 @@ public class NotesActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-//        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-//            @Override
-//            public boolean onQueryTextSubmit(String query) {
-//                return false;
-//            }
-//
-//            @Override
-//            public boolean onQueryTextChange(String newText) {
-//                if(!newText.isEmpty()) {
-//
-//                }
-//                return false;
-//            }
-//        });
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
 
-//
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                if(!newText.isEmpty()) {
+
+                    if(!newText.isEmpty()){
+                        filterList.clear();
+                        for(int i = 0;i < CategoryModel.listNotes.size();i++){
+                            CategoryModel categoryModelnote =  CategoryModel.listNotes.get(i);
+                            if(categoryModelnote.title.contains(newText)){
+                               filterList.add(categoryModelnote);
+                            }
+                        }
+
+                        IconAdapter iconAdapter1 = new IconAdapter(NotesActivity.this,filterList);
+                        gridView.setAdapter(iconAdapter1);
+
+//                        ListViewAdaptor listViewAdaptor = new ListViewAdaptor(PhonebookActivity.this,R.layout.display_phonebook,searchedlist);
+//                        listView.setAdapter(listViewAdaptor);
+                    }
+
+                    if(newText.isEmpty()){
+                        IconAdapter iconAdapter1 = new IconAdapter(NotesActivity.this,CategoryModel.listNotes);
+                        gridView.setAdapter(iconAdapter1);
+                    }
+
+
+
+                }
+                return false;
+            }
+        });
+
+
 
 
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -107,7 +134,13 @@ public class NotesActivity extends AppCompatActivity {
                 builder.setPositiveButton("YES", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        if(dataBaseHelper.deletenote(position)){
+
+                        ccid = CategoryModel.listNotes.get(position).getId();
+
+
+
+
+                        if(dataBaseHelper.deletenote(ccid)){
                             Toast.makeText(NotesActivity.this, "deleted", Toast.LENGTH_SHORT).show();
                             loadNotes();
                              IconAdapter iconAdapter = new IconAdapter(NotesActivity.this, CategoryModel.listNotes);

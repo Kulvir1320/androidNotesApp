@@ -5,6 +5,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.core.content.FileProvider;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
@@ -21,6 +22,7 @@ import android.media.MediaRecorder;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Looper;
 import android.provider.MediaStore;
 import android.util.Log;
@@ -41,10 +43,12 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 
 public class DescriptionActivity extends AppCompatActivity {
     ImageButton imageButton;
@@ -53,6 +57,8 @@ public class DescriptionActivity extends AppCompatActivity {
     ImageButton startRec;
     ImageButton stopRec;
     ImageButton playRec;
+    String mCurrentPhotoPath;
+    Bitmap mImageBitmap;
 
     private static final int REQUEST_CODE = 1;
 
@@ -169,7 +175,7 @@ public class DescriptionActivity extends AppCompatActivity {
             public void onClick(View v) {
 
                 Calendar calendar = Calendar.getInstance();
-                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-mm-dd hh:mm:ss");
+                SimpleDateFormat sdf = new SimpleDateFormat();
                 String joiningDate = sdf.format(calendar.getTime());
 
                 String cname = MainActivity.categoryName.get(MainActivity.catPosition);
@@ -280,20 +286,58 @@ public class DescriptionActivity extends AppCompatActivity {
     }
 
     private void openCamera() {
-        ContentValues values = new ContentValues();
-        values.put(MediaStore.Images.Media.TITLE,"New picture");
-//        values.put(MediaStore.Images.Media.DESCRIPTION,"From camera");
-        imageUri = getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,values);
-        System.out.println("-----------------------------------------------------");
-        System.out.println(imageUri);
+
+        Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        if(cameraIntent.resolveActivity(getPackageManager()) != null){
+            File photofile = null;
+            try {
+                photofile = createImageFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            if(photofile != null){
+
+                cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, FileProvider.getUriForFile(this,getPackageName() + ".provider",photofile));
+                startActivityForResult(cameraIntent,CAMERA_REQUEST);
+
+            }
+        }
+
+//        ContentValues values = new ContentValues();
+//        values.put(MediaStore.Images.Media.TITLE,"New picture");
+////        values.put(MediaStore.Images.Media.DESCRIPTION,"From camera");
+//        imageUri = getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,values);
+//        System.out.println("-----------------------------------------------------");
+//        System.out.println(imageUri);
+//
+//
+//        Intent cameraintent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+//        cameraintent.putExtra(MediaStore.EXTRA_OUTPUT,imageUri);
+//        startActivityForResult(cameraintent,MY_CAMERA_PERMISSION_CODE);
 
 
-        Intent cameraintent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        cameraintent.putExtra(MediaStore.EXTRA_OUTPUT,imageUri);
-        startActivityForResult(cameraintent,MY_CAMERA_PERMISSION_CODE);
+
+    }
+
+    private File createImageFile() throws IOException {
+
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String imageFileName = "JPEG_" + timeStamp + "_";
+
+        File storageDir = Environment.getExternalStorageDirectory();
+        File dir = new File(storageDir.getAbsolutePath() + "/notes/");
+         if(!dir.exists()){
+             dir.mkdir();
+         }
+
+         File image = File.createTempFile(imageFileName,".jpg",dir);
 
 
 
+        // Save a file: path for use with ACTION_VIEW intents
+        mCurrentPhotoPath = "file:" + image.getAbsolutePath();
+        return image;
     }
 
     @Override
@@ -341,11 +385,30 @@ public class DescriptionActivity extends AppCompatActivity {
     @SuppressLint("MissingSuperCall")
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        if(resultCode == RESULT_OK) {
-            imageView.setImageURI(imageUri);
+        if(resultCode == RESULT_OK && REQUEST_CODE == CAMERA_REQUEST) {
+//            imageView.setImageURI(imageUri);
+//
+//            String str = imageUri.getPath();
+//            System.out.println("path:" + imageUri.getPath() + ".jpeg");
 
-            String str = imageUri.getPath();
-            System.out.println("path:" + imageUri.getPath() + ".jpeg");
+            try {
+                mImageBitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(),Uri.parse(mCurrentPhotoPath));
+                imageView.setImageBitmap(mImageBitmap);
+
+
+
+
+
+
+
+                
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+
+
+
         }
 
     }
