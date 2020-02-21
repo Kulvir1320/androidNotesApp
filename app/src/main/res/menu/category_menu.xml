@@ -3,10 +3,14 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:id="@+id/add"
-        android:title="Add"
+        android:id="@+id/btn_location"
+        android:title="location"
+        android:icon="@drawable/ic_navigation_black_24dp"
         app:showAsAction="ifRoom"
         />
+
+
+
 
 
 </menu>

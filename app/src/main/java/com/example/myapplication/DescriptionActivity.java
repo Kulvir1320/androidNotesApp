@@ -26,6 +26,9 @@ import android.os.Environment;
 import android.os.Looper;
 import android.provider.MediaStore;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -190,12 +193,12 @@ public class DescriptionActivity extends AppCompatActivity {
                 }
 
 
-                if(selected){
-                    if(dataBaseHelper.updateNote(nid,ntitle,ndesc,audiofilepath)){
+                if(selected) {
+                    if (dataBaseHelper.updateNote(nid, ntitle, ndesc, audiofilepath)) {
                         Toast.makeText(DescriptionActivity.this, "updated", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(DescriptionActivity.this, "not saved", Toast.LENGTH_SHORT).show();
                     }
-                }else{
-                    Toast.makeText(DescriptionActivity.this, "not saved", Toast.LENGTH_SHORT).show();
                 }
 
                 if(!selected){
@@ -283,6 +286,26 @@ public class DescriptionActivity extends AppCompatActivity {
 
 
 
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater menuInflater = getMenuInflater();
+        menuInflater.inflate(R.menu.category_menu,menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.btn_location:
+                Intent intent = new Intent(DescriptionActivity.this,MapActivity.class);
+                intent.putExtra("id",nid);
+                startActivity(intent);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     private void openCamera() {
@@ -385,7 +408,7 @@ public class DescriptionActivity extends AppCompatActivity {
     @SuppressLint("MissingSuperCall")
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        if(resultCode == RESULT_OK && REQUEST_CODE == CAMERA_REQUEST) {
+        if(resultCode == RESULT_OK ) {
 //            imageView.setImageURI(imageUri);
 //
 //            String str = imageUri.getPath();
@@ -395,13 +418,6 @@ public class DescriptionActivity extends AppCompatActivity {
                 mImageBitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(),Uri.parse(mCurrentPhotoPath));
                 imageView.setImageBitmap(mImageBitmap);
 
-
-
-
-
-
-
-                
             } catch (IOException e) {
                 e.printStackTrace();
             }

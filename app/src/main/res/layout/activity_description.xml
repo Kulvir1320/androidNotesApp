@@ -38,7 +38,8 @@
         android:layout_below="@+id/chooseimagebtn"
         android:layout_width="350dp"
         android:layout_height="300dp"
-        android:layout_margin="20dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="5dp"
         android:id="@+id/image_view"
         />
 
@@ -53,7 +54,7 @@
         <ImageButton
             android:layout_width="50dp"
             android:layout_height="50dp"
-            android:layout_marginLeft="170dp"
+            android:layout_marginLeft="160dp"
             android:id="@+id/btn_start_record"
             android:src="@drawable/ic_mic_black_24dp"
             android:scaleType="fitXY"
@@ -66,12 +67,14 @@
             android:src="@drawable/ic_stop_black_24dp"
             android:scaleType="fitXY"
             android:visibility="gone"
+            android:layout_marginLeft="160dp"
             android:background="@color/colorPrimary" />
 
         <ImageButton
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:id="@+id/btn_play_record"
+            android:layout_marginLeft="160dp"
             android:src="@drawable/ic_play_arrow_black_24dp"
             android:scaleType="fitXY"
             android:visibility="gone"

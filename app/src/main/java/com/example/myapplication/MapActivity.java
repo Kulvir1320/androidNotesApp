@@ -102,8 +102,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         Intent intent = getIntent();
         i = intent.getExtras().getInt("id");
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        Double notes_lat = CategoryModel.listNotes.get(i).getNoteLat();
-        Double notes_long = CategoryModel.listNotes.get(i).getNoteLong();
+        Double notes_lat = CategoryModel.listNotes.get(i-1).getNoteLat();
+        Double notes_long = CategoryModel.listNotes.get(i-1).getNoteLong();
 
         LatLng noteLatLng = new LatLng(notes_lat,notes_long);
         MarkerOptions options = new MarkerOptions().position(noteLatLng).title("your saved loaction")
