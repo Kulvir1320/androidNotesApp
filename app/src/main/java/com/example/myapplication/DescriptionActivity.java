@@ -68,12 +68,15 @@ public class DescriptionActivity extends AppCompatActivity {
 
     Location noteLocation;
     String titleName;
+    int nid;
 
     String audiofilepath = "";
     MediaRecorder mediaRecorder;
     MediaPlayer mediaPlayer;
     AudioManager audioManager;
     boolean selected;
+
+    CategoryModel selectednote;
 
     final int REQUEST_PERMISSION_CODE = 1000;
 
@@ -124,7 +127,12 @@ public class DescriptionActivity extends AppCompatActivity {
         selected = intent.getBooleanExtra("selected",false);
 
         if(selected){
-            audiofilepath = intent.getStringExtra("audio");
+
+            selectednote = (CategoryModel) intent.getSerializableExtra("note");
+            editTextTitle.setText(selectednote.getTitle());
+            editTextDesc.setText(selectednote.getDescription());
+            audiofilepath = selectednote.getAudio();
+            nid = selectednote.getId();
             startRec.setVisibility(View.GONE);
             playRec.setVisibility(View.VISIBLE);
         }
@@ -175,11 +183,24 @@ public class DescriptionActivity extends AppCompatActivity {
                     return;
                 }
 
-                if(dataBaseHelper.addNote(cname,ntitle,ndesc,joiningDate,noteLocation.getLatitude(),noteLocation.getLongitude(),audiofilepath)){
-                    Toast.makeText(DescriptionActivity.this, "saved", Toast.LENGTH_SHORT).show();
-                }else {
+
+                if(selected){
+                    if(dataBaseHelper.updateNote(nid,ntitle,ndesc,audiofilepath)){
+                        Toast.makeText(DescriptionActivity.this, "updated", Toast.LENGTH_SHORT).show();
+                    }
+                }else{
                     Toast.makeText(DescriptionActivity.this, "not saved", Toast.LENGTH_SHORT).show();
                 }
+
+                if(!selected){
+                    if(dataBaseHelper.addNote(cname,ntitle,ndesc,joiningDate,noteLocation.getLatitude(),noteLocation.getLongitude(),audiofilepath)){
+                        Toast.makeText(DescriptionActivity.this, "saved", Toast.LENGTH_SHORT).show();
+                    }else {
+                        Toast.makeText(DescriptionActivity.this, "not saved", Toast.LENGTH_SHORT).show();
+                    }
+                }
+
+
 
                 Intent intent = new Intent(DescriptionActivity.this,NotesActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -261,8 +282,10 @@ public class DescriptionActivity extends AppCompatActivity {
     private void openCamera() {
         ContentValues values = new ContentValues();
         values.put(MediaStore.Images.Media.TITLE,"New picture");
-        values.put(MediaStore.Images.Media.DESCRIPTION,"From camera");
+//        values.put(MediaStore.Images.Media.DESCRIPTION,"From camera");
         imageUri = getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,values);
+        System.out.println("-----------------------------------------------------");
+        System.out.println(imageUri);
 
 
         Intent cameraintent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
@@ -320,7 +343,11 @@ public class DescriptionActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         if(resultCode == RESULT_OK) {
             imageView.setImageURI(imageUri);
+
+            String str = imageUri.getPath();
+            System.out.println("path:" + imageUri.getPath() + ".jpeg");
         }
+
     }
 
     private void buildLocationRequest(){

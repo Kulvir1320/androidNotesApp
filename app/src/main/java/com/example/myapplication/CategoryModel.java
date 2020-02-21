@@ -2,9 +2,10 @@ package com.example.myapplication;
 
 import android.location.Location;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class CategoryModel {
+public class CategoryModel implements Serializable {
 
 
      int id;

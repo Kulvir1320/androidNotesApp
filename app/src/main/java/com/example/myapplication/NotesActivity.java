@@ -1,8 +1,10 @@
 package com.example.myapplication;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -12,6 +14,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.GridView;
+import android.widget.SearchView;
+import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
@@ -29,6 +33,8 @@ public class NotesActivity extends AppCompatActivity {
     FloatingActionButton floatingActionButton;
     DataBaseHelper dataBaseHelper;
     String audioPath;
+    SearchView searchView;
+    List<CategoryModel> FilterList;
 
 
     @Override
@@ -55,26 +61,22 @@ public class NotesActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-
-//        gridView.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+//        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
 //            @Override
-//            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-//
-//                System.out.println("grid view click");
-//
-//                audioPath = CategoryModel.listNotes.get(position).getAudio();
-//                Intent intent = new Intent(NotesActivity.this, DescriptionActivity.class);
-//                intent.putExtra("audio",audioPath);
-//                intent.putExtra("selected",true);
-//                startActivity(intent);
-//
+//            public boolean onQueryTextSubmit(String query) {
+//                return false;
 //            }
 //
 //            @Override
-//            public void onNothingSelected(AdapterView<?> parent) {
+//            public boolean onQueryTextChange(String newText) {
+//                if(!newText.isEmpty()) {
 //
+//                }
+//                return false;
 //            }
 //        });
+
+//
 
 
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -82,12 +84,51 @@ public class NotesActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
                 System.out.println("grid view click");
+                CategoryModel cnote;
+
+                cnote = CategoryModel.listNotes.get(position);
 
                 audioPath = CategoryModel.listNotes.get(position).getAudio();
                 Intent intent = new Intent(NotesActivity.this, DescriptionActivity.class);
                 intent.putExtra("audio",audioPath);
                 intent.putExtra("selected",true);
+                intent.putExtra("note",cnote);
                 startActivity(intent);
+            }
+        });
+
+        gridView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, final int position, long id) {
+
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(NotesActivity.this);
+                builder.setTitle("DELETE");
+                builder.setPositiveButton("YES", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        if(dataBaseHelper.deletenote(position)){
+                            Toast.makeText(NotesActivity.this, "deleted", Toast.LENGTH_SHORT).show();
+                            loadNotes();
+                             IconAdapter iconAdapter = new IconAdapter(NotesActivity.this, CategoryModel.listNotes);
+                            gridView.setAdapter(iconAdapter);
+                        }else {
+                            Toast.makeText(NotesActivity.this, "not deleted", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+
+                builder.setNegativeButton("NO", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+                });
+
+                AlertDialog alertDialog = builder.create();
+                alertDialog.show();
+
+                return true;
             }
         });
 

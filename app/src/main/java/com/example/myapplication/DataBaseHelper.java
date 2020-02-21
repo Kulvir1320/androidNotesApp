@@ -78,4 +78,27 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     }
 
 
+    boolean updateNote(int id, String title, String desc,String audio){
+        SQLiteDatabase sqLiteDatabase = getWritableDatabase();
+        ContentValues cv = new ContentValues();
+
+        cv.put(COLUMN_TITLE,title);
+        cv.put(COLUMN_DESC,desc);
+        cv.put(COLUMN_AUDIO,audio);
+
+        // this method returns the number of rows affected
+
+        return sqLiteDatabase.update(TABLE_NAME,cv,COLUMN_ID + "=?",new String[]{String.valueOf(id)}) > 0;
+    }
+
+    boolean deletenote(int id){
+        SQLiteDatabase sqLiteDatabase = getWritableDatabase();
+
+        //the delete method returns the number of rows affected
+
+        return sqLiteDatabase.delete(TABLE_NAME,COLUMN_ID + "=?", new String[]{String.valueOf(id)}) > 0;
+    }
+
+
+
 }

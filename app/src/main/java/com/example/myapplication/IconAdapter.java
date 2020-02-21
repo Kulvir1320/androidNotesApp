@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -52,21 +53,13 @@ public class IconAdapter extends BaseAdapter {
         TextView title = convertView.findViewById(R.id.tv_title);
         TextView desc = convertView.findViewById(R.id.tv_desc);
         TextView date = convertView.findViewById(R.id.tv_date);
-//        Button locationbtn = convertView.findViewById(R.id.btn_location);
+
 
         title.setText(categoryModelList.get(position).getTitle());
         desc.setText(categoryModelList.get(position).getDescription());
         date.setText(categoryModelList.get(position).getDate());
 
-//        locationbtn.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//        Intent intent = new Intent(context,MapActivity.class);
-//        intent.putExtra("id", position);
-//        context.startActivity(intent);
-//
-//            }
-//        });
+
 
 
 //        ImageView imageView = convertView.findViewById(R.id.image_view);
