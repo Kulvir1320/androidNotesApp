@@ -168,13 +168,13 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
                     CameraPosition cameraPosition = CameraPosition.builder()
                             .target(new LatLng(userLocation.latitude, userLocation.longitude))
-                            .zoom(15)
+                            .zoom(10)
                             .bearing(0)
                             .tilt(45)
                             .build();
                     mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
                     homeMarker = mMap.addMarker(new MarkerOptions().position(userLocation).title("Your Location")
-                            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
+                            .icon(bitmapDescriptorFromVector(getApplicationContext(), R.drawable.icon_loc)));
 
                 }
             }
