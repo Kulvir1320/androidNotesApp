@@ -27,23 +27,11 @@ public class CategoryModel implements Serializable {
     }
 
 
-//    public CategoryModel(int id, String title, String description, String date, double noteLat, double noteLong) {
-//        this.id = id;
-//        this.title = title;
-//        this.description = description;
-//        this.date = date;
-//        this.noteLat = noteLat;
-//        this.noteLong = noteLong;
-//    }
-
 
     public int getId() {
         return id;
     }
 
-//    public String getCategoryName() {
-//        return categoryName;
-//    }
 
     public String getTitle() {
         return title;
@@ -77,18 +65,5 @@ public class CategoryModel implements Serializable {
     }
 
 
-//    private static String categoryName;
-//    private static String NotesName;
-//
-//    public CategoryModel(String categoryName) {
-//
-//        this.categoryName = categoryName;
-//    }
-//
-//
-//    public static String getCategoryName() {
-//        return categoryName;
-//    }
-//
-//    public static ArrayList<CategoryModel> Categorylist = new ArrayList<>();
+
 }

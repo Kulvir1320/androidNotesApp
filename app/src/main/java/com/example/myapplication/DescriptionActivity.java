@@ -2,6 +2,7 @@ package com.example.myapplication;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -62,6 +63,7 @@ public class DescriptionActivity extends AppCompatActivity {
     ImageButton playRec, replayRec;
     String mCurrentPhotoPath ;
     Bitmap mImageBitmap;
+    double latitude,longitude;
 
     private static final int REQUEST_CODE = 1;
 
@@ -112,6 +114,9 @@ public class DescriptionActivity extends AppCompatActivity {
 
          final EditText editTextTitle = findViewById(R.id.title_edit_text);
         final EditText editTextDesc= findViewById(R.id.description_edit_text);
+
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setTitle("Detail");
         //image capture
 
         imageButton = findViewById(R.id.chooseimagebtn);
@@ -146,6 +151,8 @@ public class DescriptionActivity extends AppCompatActivity {
             editTextDesc.setText(selectednote.getDescription());
             audiofilepath = selectednote.getAudio();
             mCurrentPhotoPath = selectednote.getImage();
+            latitude = selectednote.getNoteLat();
+            longitude = selectednote.getNoteLong();
             nid = selectednote.getId();
             startRec.setVisibility(View.GONE);
             playRec.setVisibility(View.VISIBLE);
@@ -355,7 +362,8 @@ public class DescriptionActivity extends AppCompatActivity {
         switch (item.getItemId()){
             case R.id.btn_location:
                 Intent intent = new Intent(DescriptionActivity.this,MapActivity.class);
-                intent.putExtra("id",nid);
+                intent.putExtra("latitude",latitude);
+                intent.putExtra("longitude",longitude);
                 startActivity(intent);
                 return true;
             default:

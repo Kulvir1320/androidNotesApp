@@ -2,6 +2,7 @@ package com.example.myapplication;
 
 import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -65,6 +66,9 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map);
+
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setTitle("Location");
         initMap();
         getUserLocation();
 
@@ -103,10 +107,12 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         mMap = googleMap;
         mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
         Intent intent = getIntent();
-        i = intent.getExtras().getInt("id");
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        dest_lat = CategoryModel.listNotes.get(i-1).getNoteLat();
-        dest_lng = CategoryModel.listNotes.get(i-1).getNoteLong();
+        
+
+
+
+        dest_lat = intent.getDoubleExtra("latitude",0);
+        dest_lng = intent.getDoubleExtra("longitude",0);
 
         LatLng noteLatLng = new LatLng(dest_lat,dest_lng);
         MarkerOptions options = new MarkerOptions().position(noteLatLng).title("your saved loaction")
