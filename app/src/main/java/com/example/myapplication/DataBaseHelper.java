@@ -91,13 +91,14 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 
 
 
-    boolean updateNote(int id, String title, String desc,String audio){
+    boolean updateNote(int id, String title, String desc,String audio,String image){
         SQLiteDatabase sqLiteDatabase = getWritableDatabase();
         ContentValues cv = new ContentValues();
 
         cv.put(COLUMN_TITLE,title);
         cv.put(COLUMN_DESC,desc);
         cv.put(COLUMN_AUDIO,audio);
+        cv.put(COLUMN_IMAGE,image);
 
         // this method returns the number of rows affected
 

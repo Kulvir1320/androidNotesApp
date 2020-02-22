@@ -59,7 +59,7 @@ public class DescriptionActivity extends AppCompatActivity {
     Uri imageUri;
     ImageButton startRec;
     ImageButton stopRec;
-    ImageButton playRec;
+    ImageButton playRec, replayRec;
     String mCurrentPhotoPath ;
     Bitmap mImageBitmap;
 
@@ -119,6 +119,7 @@ public class DescriptionActivity extends AppCompatActivity {
         startRec = findViewById(R.id.btn_start_record);
         stopRec = findViewById(R.id.btn_stop_record);
         playRec = findViewById(R.id.btn_play_record);
+        replayRec = findViewById(R.id.btn_replay);
 
 
 
@@ -213,18 +214,18 @@ public class DescriptionActivity extends AppCompatActivity {
 
 
                 if(selected) {
-                    if (dataBaseHelper.updateNote(nid, ntitle, ndesc, audiofilepath)) {
-                        Toast.makeText(DescriptionActivity.this, "updated", Toast.LENGTH_SHORT).show();
+                    if (dataBaseHelper.updateNote(nid, ntitle, ndesc, audiofilepath,mCurrentPhotoPath)) {
+                        Toast.makeText(DescriptionActivity.this, "Updated", Toast.LENGTH_SHORT).show();
                     } else {
-                        Toast.makeText(DescriptionActivity.this, "not saved", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(DescriptionActivity.this, "Not Updated", Toast.LENGTH_SHORT).show();
                     }
                 }
 
                 if(!selected){
                     if(dataBaseHelper.addNote(cname,ntitle,ndesc,joiningDate,noteLocation.getLatitude(),noteLocation.getLongitude(),audiofilepath,mCurrentPhotoPath)){
-                        Toast.makeText(DescriptionActivity.this, "saved", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(DescriptionActivity.this, "Saved", Toast.LENGTH_SHORT).show();
                     }else {
-                        Toast.makeText(DescriptionActivity.this, "not saved", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(DescriptionActivity.this, "Not saved", Toast.LENGTH_SHORT).show();
                     }
                 }
 
@@ -296,10 +297,30 @@ public class DescriptionActivity extends AppCompatActivity {
                 mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
                     @Override
                     public void onCompletion(MediaPlayer mp) {
+                        playRec.setVisibility(View.GONE);
+                        replayRec.setVisibility(View.VISIBLE);
+
                     }
                 });
 
                 mediaPlayer.start();
+            }
+        });
+
+        replayRec.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                mediaPlayer = new MediaPlayer();
+                try {
+                    mediaPlayer.setDataSource(audiofilepath);
+                    mediaPlayer.prepare();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+                mediaPlayer.start();
+
             }
         });
 
@@ -418,7 +439,7 @@ public class DescriptionActivity extends AppCompatActivity {
                 fusedLocationProviderClient.requestLocationUpdates(locationRequest,locationCallback, Looper.myLooper());
             }
             else{
-                Toast.makeText(this, " camersa denied", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, " Camera denied", Toast.LENGTH_SHORT).show();
             }
 
         }

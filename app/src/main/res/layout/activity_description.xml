@@ -81,6 +81,16 @@
             android:visibility="gone"
             android:background="@color/colorPrimary" />
 
+        <ImageButton
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:id="@+id/btn_replay"
+            android:layout_marginLeft="160dp"
+            android:src="@drawable/ic_replay_black_24dp"
+            android:scaleType="fitXY"
+            android:visibility="gone"
+            android:background="@color/colorPrimary" />
+
 
 
 
