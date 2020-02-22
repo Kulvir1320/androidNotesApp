@@ -79,7 +79,7 @@ public class DescriptionActivity extends AppCompatActivity {
     String titleName;
     int nid;
 
-    String audiofilepath = "";
+    String audiofilepath;
     MediaRecorder mediaRecorder;
     MediaPlayer mediaPlayer;
     AudioManager audioManager;
@@ -92,7 +92,7 @@ public class DescriptionActivity extends AppCompatActivity {
 
     final int REQUEST_PERMISSION_CODE = 1000;
 
-    String RECORDED_FILE = "/audio.3gp";
+    String RECORDED_FILE ;
 
 
     @Override
@@ -149,6 +149,21 @@ public class DescriptionActivity extends AppCompatActivity {
             nid = selectednote.getId();
             startRec.setVisibility(View.GONE);
             playRec.setVisibility(View.VISIBLE);
+
+            if(audiofilepath != null){
+                playRec.setVisibility(View.VISIBLE);
+                startRec.setVisibility(View.GONE);
+                stopRec.setVisibility(View.GONE);
+                replayRec.setVisibility(View.GONE);
+            }else {
+                startRec.setVisibility(View.VISIBLE);
+                stopRec.setVisibility(View.GONE);
+                replayRec.setVisibility(View.GONE);
+                playRec.setVisibility(View.GONE);
+
+            }
+
+
 
             if(mCurrentPhotoPath != null){
                 try {
